@@ -38,6 +38,7 @@ it('should not throw error when options are valid', () => {
 
   // Then
   expect(options).toEqual({
+    columnsize: false,
     dbname,
     excludedTables,
     host,
@@ -68,11 +69,12 @@ it('should return default options when optional options are not set', () => {
   ]);
 
   // When
-  const { host, port, schema, outputPath } = getOptions({
+  const { columnsize, host, port, schema, outputPath } = getOptions({
     program,
   });
 
   // Then
+  expect(columnsize).toEqual(false);
   expect(host).toEqual('127.0.0.1');
   expect(port).toEqual(5_432);
   expect(schema).toEqual('public');

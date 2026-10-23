@@ -56,6 +56,11 @@ export const createProgram = (): Command => {
       'tables to exclude',
       handleCommaSeparatedExcludedTableList
     )
+    .option(
+      '-c, --columnsize <true|false>',
+      'show column size in data types',
+      'false'
+    )
     .addHelpText(
       'after',
       '\n' +
@@ -78,6 +83,7 @@ export const getOptions = ({
   program = createProgram(),
 }: GetOptionsParameters = {}) => {
   const OptionsSchema = z.object({
+    columnsize: z.enum(['true', 'false']).transform((value) => value === 'true'),
     dbname: z.string(),
     excludedTables: z.union([z.string().array(), z.undefined()]),
     host: z.string(),

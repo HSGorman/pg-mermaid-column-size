@@ -21,13 +21,20 @@ export const createConnection = async ({
 };
 
 type GetEntitiesParameters = {
+  columnsize?: boolean;
   excludedTables?: string[];
   schema?: string;
 };
 export const getEntities = ({
+  columnsize = false,
   excludedTables = [],
   schema = 'public',
-}: GetEntitiesParameters = {}) => sql.type(EntitySchema)`
+}: GetEntitiesParameters = {}) => {
+  const columnDataTypeSql = columnsize
+    ? sql.fragment`replace(columns.data_type || coalesce('(' || columns.character_maximum_length || ')', ''), ' ', '_')`
+    : sql.fragment`replace(columns.data_type, ' ', '_')`;
+
+  return sql.type(EntitySchema)`
   select 
     columns.table_name as name,
     json_agg(
@@ -48,7 +55,7 @@ export const getEntities = ({
         case
           when columns.data_type = 'ARRAY' then concat(regexp_replace(columns.udt_name, '^_', ''), '[]')
           when columns.data_type = 'USER-DEFINED' then columns.udt_name
-          else replace(columns.data_type, ' ', '_')
+          else ${columnDataTypeSql}
         end
       )
       order by
@@ -82,7 +89,8 @@ export const getEntities = ({
       name
     order by 
       name;
-`;
+  `;
+};
 
 type GetRelationshipsParameters = {
   excludedTables?: string[];

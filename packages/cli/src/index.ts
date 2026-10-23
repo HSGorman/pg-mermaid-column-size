@@ -14,6 +14,7 @@ import * as path from 'node:path';
 
 export const main = async () => {
   const {
+    columnsize,
     dbname,
     excludedTables = [],
     host,
@@ -33,7 +34,7 @@ export const main = async () => {
   });
 
   const entities = await connection.any(
-    getEntities({ excludedTables, schema })
+    getEntities({ columnsize, excludedTables, schema })
   );
   const relationships = await connection.any(
     getRelationships({ excludedTables, schema })

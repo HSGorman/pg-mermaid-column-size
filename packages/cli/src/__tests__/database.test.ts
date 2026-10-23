@@ -169,6 +169,46 @@ describe('getEntities', () => {
     ]);
   });
 
+  it('should not return column size by default', async () => {
+    // Given
+    await connection.any(
+      sql.typeAlias('void')`
+        create table post (
+          title character varying(255)
+        );
+      `
+    );
+
+    // When
+    const tables = await connection.any(getEntities());
+
+    // Then
+    expect(tables[0].attributes[0].type).toEqual('character_varying');
+  });
+
+  it('should return column size when `columnsize` is true', async () => {
+    // Given
+    await connection.any(
+      sql.typeAlias('void')`
+        create table post (
+          id uuid,
+          title character varying(255)
+        );
+      `
+    );
+
+    // When
+    const tables = await connection.any(getEntities({ columnsize: true }));
+
+    // Then
+    expect(
+      tables[0].attributes.map(({ name, type }) => ({ name, type }))
+    ).toEqual([
+      { name: 'title', type: 'character_varying(255)' },
+      { name: 'id', type: 'uuid' },
+    ]);
+  });
+
   it('should return attributes and handle `ARRAY` type', async () => {
     // Given
     await connection.any(
