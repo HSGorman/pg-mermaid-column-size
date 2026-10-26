@@ -25,6 +25,7 @@ Options:
   -U, --username <username>      username to connect to the database
   -h, --host <hostname>          host address of the database (default: "127.0.0.1")
   -p, --port <port>              port number at which the instance is listening (default: "5432")
+  -c, --columnsize               show the size of the columns (default: false)
   --schema <schema>              schema name to generate to (default: "public")
   --output-path <outputPath>     output path to generate to (default: "./database.md")
   --excluded-tables <tables...>  tables to exclude
